@@ -1,0 +1,28 @@
+name: process-mining
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    environment:
+      AGENT_API_URL: ${AGENT_API_URL:-http://host.docker.internal:8081}
+      WORKSPACE_API_URL: ${WORKSPACE_API_URL:-http://host.docker.internal:8090}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-}
+    ports:
+      - "${PORT:-8087}:8080"
+    volumes:
+      - process_data:/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=5)"]
+      interval: 20s
+      timeout: 20s
+      start_period: 45s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+volumes:
+  process_data:

@@ -1,0 +1,7 @@
+*
+!requirements.txt
+!app.py
+!agent.py
+!report.py
+!static/
+!static/**
